@@ -15,108 +15,49 @@ Future<void> main() async {
   Bloc.observer = MyBlocObserver();
   DioHelper.init();
   await CacheHelper.init();
-  bool? isDark = CacheHelper.getBoolean(key: 'isDark');
-  runApp(MyApp(
-    isDark,
-  ));
+//  bool? isDark = CacheHelper.getBoolean(key: 'isDark');
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final bool? isDark;
-
-  MyApp(this.isDark);
+  MyApp();
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        return AppCubit()..changeModeTheme(fromShared: isDark);
-      },
-      child: BlocConsumer<AppCubit, AppStates>(
-        builder: (context, state) {
-          AppCubit cubit = AppCubit.get(context);
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-              scaffoldBackgroundColor: Colors.white,
-              appBarTheme: const AppBarTheme(
-                iconTheme: IconThemeData(
-                  color: Colors.black,
-                ),
-                systemOverlayStyle: SystemUiOverlayStyle(
-                  statusBarColor: Colors.white,
-                  statusBarIconBrightness: Brightness.dark,
-                ),
-                backgroundColor: Colors.white,
-                elevation: 0,
-                titleTextStyle: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-              textTheme: GoogleFonts.poppinsTextTheme().copyWith(
-                bodyText1: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                ),
-              ),
-              bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-                type: BottomNavigationBarType.fixed,
-                selectedItemColor: Colors.blue,
-              ),
-            ),
-            darkTheme: ThemeData(
-              scaffoldBackgroundColor: const Color(0xFF333739),
-              appBarTheme: const AppBarTheme(
-                iconTheme: IconThemeData(
-                  color: Colors.black,
-                ),
-                systemOverlayStyle: SystemUiOverlayStyle(
-                  statusBarColor: Color(0xFF333739),
-                  statusBarIconBrightness: Brightness.light,
-                ),
-                backgroundColor: Color(0xFF333739),
-                elevation: 0,
-                titleTextStyle: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-                actionsIconTheme: IconThemeData(
-                  color: Colors.white,
-                ),
-              ),
-              bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-                type: BottomNavigationBarType.fixed,
-                backgroundColor: Color(0xFF333739),
-                unselectedItemColor: Colors.grey,
-                selectedItemColor: Colors.deepOrange,
-              ),
-              // textTheme: const TextTheme(
-              //   bodyText1: TextStyle(
-              //     fontSize: 18,
-              //     fontWeight: FontWeight.w600,
-              //     color: Colors.white,
-              //   ),
-              // ),
-              textTheme: GoogleFonts.poppinsTextTheme().copyWith(
-                bodyText1: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            themeMode: ThemeMode.light,
-            // themeMode: cubit.isDark == false ? ThemeMode.light : ThemeMode.dark,
-            home: OnBoardingScreen(),
-          );
-        },
-        listener: (context, state) {},
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: const AppBarTheme(
+          iconTheme: IconThemeData(
+            color: Colors.black,
+          ),
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Colors.white,
+            statusBarIconBrightness: Brightness.dark,
+          ),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        textTheme: GoogleFonts.poppinsTextTheme().copyWith(
+          bodyText1: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: Colors.blue,
+        ),
       ),
+      home: OnBoardingScreen(),
     );
   }
 }

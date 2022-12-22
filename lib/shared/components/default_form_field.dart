@@ -6,12 +6,16 @@ class DefaultFormField extends StatelessWidget {
   final bool isPassword;
   final void Function(String value) onFieldSubmitted;
   final void Function() onTap;
+  final void Function()? suffixTap;
+
   final void Function(String value) onChanged;
   final String? Function(String? value) onValidate;
   final IconData prefixIcon;
   final Text label;
   final IconData? suffixIcon;
+
   DefaultFormField({
+    this.suffixTap,
     this.suffixIcon,
     required this.controller,
     required this.textInputType,
@@ -39,8 +43,11 @@ class DefaultFormField extends StatelessWidget {
         prefixIcon: Icon(
           prefixIcon,
         ),
-        suffixIcon: Icon(
-          suffixIcon,
+        suffixIcon: GestureDetector(
+          onTap: suffixTap,
+          child: Icon(
+            suffixIcon,
+          ),
         ),
         border: const OutlineInputBorder(),
       ),
