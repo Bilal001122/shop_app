@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bloc/bloc.dart';
-import 'package:shop_app/cache_helper/cache_helper.dart';
-import 'package:shop_app/cubit/bloc_observer.dart';
-import 'package:shop_app/cubit/cubit.dart';
-import 'package:shop_app/cubit/states.dart';
-import 'package:shop_app/dio_helper/dio_helper.dart';
 import 'package:shop_app/screens/on_boarding_screen/on_boarding_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shop_app/shared/dio_helper/dio_helper.dart';
+
+import 'shared/cache_helper/cache_helper.dart';
+import 'shared/cubit/bloc_observer.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

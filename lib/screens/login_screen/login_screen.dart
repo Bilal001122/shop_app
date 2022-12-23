@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shop_app/cubit/cubit.dart';
-import 'package:shop_app/cubit/states.dart';
 import 'package:shop_app/screens/register_screen/register_screen.dart';
 import 'package:shop_app/shared/components/default_form_field.dart';
+import 'package:shop_app/shared/cubit/cubit.dart';
+import 'package:shop_app/shared/cubit/states.dart';
 
 class LoginScreen extends StatelessWidget {
   TextEditingController emailController = TextEditingController();
@@ -16,7 +17,32 @@ class LoginScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => AppCubit(),
       child: BlocConsumer<AppCubit, AppStates>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is AppLoginSuccessState) {
+            if (state.loginModel.status) {
+              print(state.loginModel.message);
+              print(state.loginModel.userData!.token);
+              Fluttertoast.showToast(
+                msg: state.loginModel.message,
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.BOTTOM,
+                backgroundColor: Colors.green,
+                textColor: Colors.white,
+                fontSize: 16,
+              );
+            } else {
+              print(state.loginModel.message);
+              Fluttertoast.showToast(
+                msg: state.loginModel.message,
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.BOTTOM,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+                fontSize: 16,
+              );
+            }
+          }
+        },
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(),

@@ -64,7 +64,6 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
               'SKIP',
               style: TextStyle(
                 fontSize: 15,
-                letterSpacing: 3,
                 fontWeight: FontWeight.w800,
               ),
             ),

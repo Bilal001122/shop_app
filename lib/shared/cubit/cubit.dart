@@ -1,7 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shop_app/cubit/states.dart';
-import 'package:shop_app/dio_helper/dio_helper.dart';
+import 'package:shop_app/models/login_model.dart';
+import 'package:shop_app/shared/cubit/states.dart';
+import 'package:shop_app/shared/dio_helper/dio_helper.dart';
 import 'package:shop_app/shared/end_points.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,7 @@ class AppCubit extends Cubit<AppStates> {
   static AppCubit get(context) => BlocProvider.of(context);
   IconData suffix = Icons.visibility_outlined;
   bool isPasswordShown = true;
+  late LoginModel loginModel;
   void userLogin({
     required String email,
     required String password,
@@ -24,8 +26,8 @@ class AppCubit extends Cubit<AppStates> {
       },
     ).then(
       (value) {
-        print(value.data);
-        emit(AppLoginSuccessState());
+        loginModel = LoginModel.fromJson(value.data);
+        emit(AppLoginSuccessState(loginModel: loginModel));
       },
     ).catchError((error) {
       emit(AppLoginErrorState(error.toString()));
@@ -40,21 +42,4 @@ class AppCubit extends Cubit<AppStates> {
 
     emit(AppChangePasswordVisibilityState());
   }
-
-// void changeBetweenBottomNavBarItems(int index) {
-//   currentIndex = index;
-//   emit(AppBottomNavState());
-// }
-//
-// void changeModeTheme({bool? fromShared}) {
-//   if (fromShared != null) {
-//     isDark = fromShared;
-//     emit(AppThemeChangeState());
-//   } else {
-//     isDark = !isDark;
-//     CacheHelper.putBoolean(key: 'isDark', value: isDark).then((value) {
-//       emit(AppThemeChangeState());
-//     });
-//   }
-// }
 }
