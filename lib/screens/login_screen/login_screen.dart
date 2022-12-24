@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shop_app/screens/register_screen/register_screen.dart';
+import 'package:shop_app/screens/shop_layout/shop_layout.dart';
+import 'package:shop_app/shared/cache_helper/cache_helper.dart';
 import 'package:shop_app/shared/components/default_form_field.dart';
 import 'package:shop_app/shared/cubit/cubit.dart';
 import 'package:shop_app/shared/cubit/states.dart';
@@ -30,6 +32,16 @@ class LoginScreen extends StatelessWidget {
                 textColor: Colors.white,
                 fontSize: 16,
               );
+              CacheHelper.saveData(
+                      key: 'token', value: state.loginModel.userData!.token)
+                  .then((value) {
+                return Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ShopLayout(),
+                    ),
+                    (route) => false);
+              });
             } else {
               print(state.loginModel.message);
               Fluttertoast.showToast(

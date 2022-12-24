@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bloc/bloc.dart';
+import 'package:shop_app/screens/login_screen/login_screen.dart';
 import 'package:shop_app/screens/on_boarding_screen/on_boarding_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shop_app/screens/shop_layout/shop_layout.dart';
 import 'package:shop_app/shared/dio_helper/dio_helper.dart';
 
 import 'shared/cache_helper/cache_helper.dart';
@@ -14,12 +16,31 @@ Future<void> main() async {
   Bloc.observer = MyBlocObserver();
   DioHelper.init();
   await CacheHelper.init();
-//  bool? isDark = CacheHelper.getBoolean(key: 'isDark');
-  runApp(MyApp());
+  Widget widget;
+  bool? onBoarding = CacheHelper.getData(
+    key: 'OnBoarding',
+  );
+  String? token = CacheHelper.getData(
+    key: 'token',
+  );
+  if (onBoarding != null) {
+    if (token != null) {
+      widget = ShopLayout();
+    } else {
+      widget = LoginScreen();
+    }
+  } else {
+    widget = OnBoardingScreen();
+  }
+  runApp(MyApp(
+    start: widget,
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  MyApp();
+  final Widget start;
+
+  MyApp({required this.start});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +77,7 @@ class MyApp extends StatelessWidget {
           selectedItemColor: Colors.blue,
         ),
       ),
-      home: OnBoardingScreen(),
+      home: start,
     );
   }
 }

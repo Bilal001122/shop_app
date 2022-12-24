@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/screens/login_screen/login_screen.dart';
+import 'package:shop_app/shared/cache_helper/cache_helper.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class BoardingModel {
@@ -45,21 +46,27 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
   bool isLast = false;
 
+  void submit() {
+    CacheHelper.saveData(key: 'OnBoarding', value: true).then((value) {
+      if (value) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginScreen(),
+          ),
+          (route) => false,
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => LoginScreen(),
-                ),
-                (route) => false,
-              );
-            },
+            onPressed: submit,
             child: const Text(
               'SKIP',
               style: TextStyle(
@@ -117,13 +124,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 FloatingActionButton(
                   onPressed: () {
                     if (isLast) {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LoginScreen(),
-                        ),
-                        (route) => false,
-                      );
+                      submit();
                     } else {
                       pageController.nextPage(
                         duration: const Duration(milliseconds: 750),
