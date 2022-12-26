@@ -1,6 +1,7 @@
 import 'package:shop_app/models/categories_model.dart';
 import 'package:shop_app/models/home_model.dart';
 
+import '../../models/change_favorites_model.dart';
 import '../../models/login_model.dart';
 
 abstract class AppStates {}
@@ -49,4 +50,28 @@ class AppCategoriesErrorState extends AppStates {
   final String error;
 
   AppCategoriesErrorState(this.error);
+}
+
+class AppChangeFavoritesSuccessState extends AppStates {
+  final ChangeFavoritesModel? changeFavoritesModel;
+
+  AppChangeFavoritesSuccessState({required this.changeFavoritesModel});
+}
+
+class AppChangeFavoritesState extends AppStates {}
+
+class AppChangeFavoritesErrorState extends AppStates {
+  final String error;
+
+  AppChangeFavoritesErrorState(this.error);
+}
+
+class AppGetFavLoadingState extends AppStates {}
+
+class AppGetFavSuccessState extends AppStates {}
+
+class AppGetFavErrorState extends AppStates {
+  final String error;
+
+  AppGetFavErrorState(this.error);
 }

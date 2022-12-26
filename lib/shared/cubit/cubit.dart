@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shop_app/models/categories_model.dart';
+import 'package:shop_app/models/change_favorites_model.dart';
 import 'package:shop_app/models/home_model.dart';
 import 'package:shop_app/models/login_model.dart';
 import 'package:shop_app/screens/shop_layout/categories_screen/categories_screen.dart';
@@ -13,6 +14,8 @@ import 'package:shop_app/shared/cubit/states.dart';
 import 'package:shop_app/shared/dio_helper/dio_helper.dart';
 import 'package:shop_app/shared/end_points.dart';
 import 'package:flutter/material.dart';
+
+import '../../models/favorites_model.dart';
 
 class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(AppInitialState());
@@ -30,6 +33,9 @@ class AppCubit extends Cubit<AppStates> {
   late LoginModel loginModel;
   HomeModel? homeModel;
   CategoriesModel? categoriesModel;
+  Map<int, bool> favorites = {};
+  ChangeFavoritesModel? changeFavoritesModel;
+  FavoritesModel? favoritesModel;
 
   void changeBottomItemNavBar(int index) {
     currentIndex = index;
@@ -74,6 +80,11 @@ class AppCubit extends Cubit<AppStates> {
       token: token,
     ).then((value) {
       homeModel = HomeModel.fromJson(json: value.data);
+      homeModel!.data.products.forEach((element) {
+        favorites.addAll({
+          element.id: element.inFav!,
+        });
+      });
       emit(
         AppHomeSuccessState(
           homeModel: homeModel,
@@ -101,6 +112,47 @@ class AppCubit extends Cubit<AppStates> {
     }).catchError((onError) {
       emit(
         AppCategoriesErrorState(onError.toString()),
+      );
+    });
+  }
+
+  void changeFavorites(int productId) {
+    favorites[productId] = !favorites[productId]!;
+    emit(AppChangeFavoritesState());
+    DioHelper.postData(
+      url: favoritess,
+      data: {
+        'product_id': productId,
+      },
+      token: token,
+    ).then((value) {
+      changeFavoritesModel = ChangeFavoritesModel.fromJson(json: value.data);
+      if (!changeFavoritesModel!.status) {
+        favorites[productId] = !favorites[productId]!;
+      } else {
+        getFavData();
+      }
+      emit(AppChangeFavoritesSuccessState(
+          changeFavoritesModel: changeFavoritesModel));
+    }).catchError((onError) {
+      favorites[productId] = !favorites[productId]!;
+      emit(AppChangeFavoritesErrorState(onError));
+    });
+  }
+
+  void getFavData() {
+    emit(AppGetFavLoadingState());
+    DioHelper.getData(
+      url: favoritess,
+      query: null,
+      token: token,
+    ).then((value) {
+      favoritesModel = FavoritesModel.fromJson(json: value.data);
+      emit(AppGetFavSuccessState());
+    }).catchError((onError) {
+      print(onError.toString());
+      emit(
+        AppGetFavErrorState(onError.toString()),
       );
     });
   }

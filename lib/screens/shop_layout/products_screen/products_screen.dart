@@ -6,6 +6,7 @@ import 'package:shop_app/models/home_model.dart';
 import 'package:shop_app/shared/cubit/cubit.dart';
 import 'package:shop_app/shared/cubit/states.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ProductsScreen extends StatelessWidget {
   const ProductsScreen({Key? key}) : super(key: key);
@@ -13,7 +14,20 @@ class ProductsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AppCubit, AppStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is AppChangeFavoritesSuccessState) {
+          if (!state.changeFavoritesModel!.status) {
+            Fluttertoast.showToast(
+              msg: state.changeFavoritesModel!.message,
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16,
+            );
+          }
+        }
+      },
       builder: (context, state) {
         HomeModel? homeModel = AppCubit.get(context).homeModel;
         CategoriesModel? categoriesModel =
@@ -21,7 +35,7 @@ class ProductsScreen extends StatelessWidget {
         return AppCubit.get(context).homeModel != null &&
                 AppCubit.get(context).categoriesModel != null
             ? SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -87,7 +101,9 @@ class ProductsScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    ProductsScroll(homeModel: homeModel!),
+                    ProductsScroll(
+                        homeModel: homeModel!,
+                        favorites: AppCubit.get(context).favorites),
                   ],
                 ),
               )
@@ -107,13 +123,13 @@ class CategoriesScroll extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 100,
       child: ListView.separated(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) {
-            return Container(
+            return SizedBox(
               height: 100,
               width: 100,
               child: Stack(
@@ -154,8 +170,11 @@ class CategoriesScroll extends StatelessWidget {
 
 class ProductsScroll extends StatelessWidget {
   final HomeModel homeModel;
+  final Map<int, bool> favorites;
 
-  const ProductsScroll({Key? key, required this.homeModel}) : super(key: key);
+  const ProductsScroll(
+      {Key? key, required this.homeModel, required this.favorites})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -166,97 +185,114 @@ class ProductsScroll extends StatelessWidget {
       mainAxisSpacing: 1,
       crossAxisSpacing: 10,
       childAspectRatio: 1 / 1.55,
-      children: List.generate(homeModel.data.products.length, (index) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              alignment: Alignment.bottomLeft,
-              children: [
-                Center(
-                  child: Image.network(
-                    homeModel.data.products[index].image,
-                    height: 200,
-                  ),
-                ),
-                if (homeModel.data.products[index].discount != 0)
-                  Container(
-                    color: Colors.red,
-                    child: Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Text(
-                        'DISCOUNT',
-                        style: GoogleFonts.poppins(
-                          fontSize: 10,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      children: List.generate(
+        homeModel.data.products.length,
+        (index) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                alignment: Alignment.bottomLeft,
                 children: [
-                  Text(
-                    homeModel.data.products[index].name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      height: 1.3,
+                  Center(
+                    child: Image.network(
+                      homeModel.data.products[index].image,
+                      height: 200,
                     ),
                   ),
-                  Row(
-                    children: [
-                      Text(
-                        '${homeModel.data.products[index].price.round()} \$',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          height: 1.3,
-                          color: Colors.blue,
+                  if (homeModel.data.products[index].discount != 0)
+                    Container(
+                      color: Colors.red,
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Text(
+                          'DISCOUNT',
+                          style: GoogleFonts.poppins(
+                            fontSize: 10,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
-                      const SizedBox(
-                        width: 5,
+                    ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      homeModel.data.products[index].name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
                       ),
-                      if (homeModel.data.products[index].discount != 0)
+                    ),
+                    Row(
+                      children: [
                         Text(
-                          '${homeModel.data.products[index].oldPrice.round()} \$',
+                          '${homeModel.data.products[index].price.round()} \$',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.poppins(
-                            fontSize: 10,
+                            fontSize: 14,
                             fontWeight: FontWeight.w500,
                             height: 1.3,
-                            color: Colors.grey,
-                            decoration: TextDecoration.lineThrough,
+                            color: Colors.blue,
                           ),
                         ),
-                      Spacer(),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.favorite_border,
+                        const SizedBox(
+                          width: 5,
                         ),
-                        padding: EdgeInsets.zero,
-                        splashRadius: 23,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            )
-          ],
-        );
-      }),
+                        if (homeModel.data.products[index].discount != 0)
+                          Text(
+                            '${homeModel.data.products[index].oldPrice.round()} \$',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.poppins(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              height: 1.3,
+                              color: Colors.grey,
+                              decoration: TextDecoration.lineThrough,
+                            ),
+                          ),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () {
+                            AppCubit.get(context).changeFavorites(
+                                homeModel.data.products[index].id);
+                            print(
+                                favorites[homeModel.data.products[index].id]!);
+                          },
+                          icon: CircleAvatar(
+                            radius: 15,
+                            backgroundColor:
+                                favorites[homeModel.data.products[index].id]!
+                                    ? Colors.blue
+                                    : Colors.grey,
+                            child: const Icon(
+                              Icons.favorite_border,
+                              color: Colors.white,
+                              size: 15,
+                            ),
+                          ),
+                          padding: EdgeInsets.zero,
+                          splashRadius: 23,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ],
+          );
+        },
+      ),
     );
   }
 }

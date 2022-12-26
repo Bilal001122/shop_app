@@ -28,7 +28,7 @@ class CategoriesScreen extends StatelessWidget {
                       height: 100,
                       fit: BoxFit.cover,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 20,
                     ),
                     Text(
@@ -42,8 +42,8 @@ class CategoriesScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Spacer(),
-                    Icon(
+                    const Spacer(),
+                    const Icon(
                       Icons.arrow_forward_ios,
                     ),
                   ],
@@ -51,7 +51,7 @@ class CategoriesScreen extends StatelessWidget {
               );
             },
             separatorBuilder: (context, index) {
-              return SizedBox(
+              return const SizedBox(
                 height: 0,
               );
             },
