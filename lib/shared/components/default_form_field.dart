@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shop_app/shared/cubit/cubit.dart';
+import 'package:shop_app/shared/cubit/states.dart';
 
 class DefaultFormField extends StatelessWidget {
   final TextEditingController controller;
@@ -13,10 +16,11 @@ class DefaultFormField extends StatelessWidget {
   final IconData prefixIcon;
   final Text label;
   final IconData? suffixIcon;
-
+  final FocusNode? focusNode;
   DefaultFormField({
     this.suffixTap,
     this.suffixIcon,
+    this.focusNode,
     required this.controller,
     required this.textInputType,
     required this.isPassword,
@@ -31,6 +35,7 @@ class DefaultFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      focusNode: focusNode,
       controller: controller,
       keyboardType: textInputType,
       obscureText: isPassword,

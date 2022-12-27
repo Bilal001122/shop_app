@@ -11,7 +11,7 @@ class AppInitialState extends AppStates {}
 class AppLoginLoadingState extends AppStates {}
 
 class AppLoginSuccessState extends AppStates {
-  final LoginModel loginModel;
+  final LoginModel? loginModel;
 
   AppLoginSuccessState({required this.loginModel});
 }
@@ -22,7 +22,23 @@ class AppLoginErrorState extends AppStates {
   AppLoginErrorState(this.error);
 }
 
+class AppRegisterLoadingState extends AppStates {}
+
+class AppRegisterSuccessState extends AppStates {
+  final LoginModel? registerModel;
+
+  AppRegisterSuccessState({required this.registerModel});
+}
+
+class AppRegisterErrorState extends AppStates {
+  final String error;
+
+  AppRegisterErrorState(this.error);
+}
+
 class AppChangePasswordVisibilityState extends AppStates {}
+
+class AppChangePasswordVisibilityState2 extends AppStates {}
 
 class AppChangeBottomNavState extends AppStates {}
 
@@ -74,4 +90,32 @@ class AppGetFavErrorState extends AppStates {
   final String error;
 
   AppGetFavErrorState(this.error);
+}
+
+class AppUserDataLoadingState extends AppStates {}
+
+class AppUserDataSuccessState extends AppStates {
+  LoginModel? loginModel;
+
+  AppUserDataSuccessState(this.loginModel);
+}
+
+class AppUserDataErrorState extends AppStates {
+  final String error;
+
+  AppUserDataErrorState(this.error);
+}
+
+class AppSearchLoadingState extends AppStates {}
+
+class AppSearchSuccessState extends AppStates {
+  // LoginModel? loginModel;
+  //
+  // AppSearchSuccessState(this.loginModel);
+}
+
+class AppSearchErrorState extends AppStates {
+  final String error;
+
+  AppSearchErrorState(this.error);
 }

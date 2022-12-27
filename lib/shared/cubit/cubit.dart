@@ -4,6 +4,7 @@ import 'package:shop_app/models/categories_model.dart';
 import 'package:shop_app/models/change_favorites_model.dart';
 import 'package:shop_app/models/home_model.dart';
 import 'package:shop_app/models/login_model.dart';
+import 'package:shop_app/models/search_model.dart';
 import 'package:shop_app/screens/shop_layout/categories_screen/categories_screen.dart';
 import 'package:shop_app/screens/shop_layout/favorites_screen/favorites_screen.dart';
 import 'package:shop_app/screens/shop_layout/products_screen/products_screen.dart';
@@ -22,23 +23,34 @@ class AppCubit extends Cubit<AppStates> {
 
   static AppCubit get(context) => BlocProvider.of(context);
   IconData suffix = Icons.visibility_outlined;
+  IconData suffix2 = Icons.visibility_outlined;
+
   bool isPasswordShown = true;
+  bool isPasswordShown2 = true;
   int currentIndex = 0;
   List<Widget> screens = [
-    ProductsScreen(),
-    CategoriesScreen(),
-    FavoritesScreen(),
+    const ProductsScreen(),
+    const CategoriesScreen(),
+    const FavoritesScreen(),
     SettingsScreen(),
   ];
-  late LoginModel loginModel;
+  LoginModel? loginModel;
+  LoginModel? registerModel;
   HomeModel? homeModel;
   CategoriesModel? categoriesModel;
   Map<int, bool> favorites = {};
   ChangeFavoritesModel? changeFavoritesModel;
   FavoritesModel? favoritesModel;
+  LoginModel? userModel;
 
   void changeBottomItemNavBar(int index) {
     currentIndex = index;
+    if (index == 3) {
+      getUserData();
+    }
+    if (index == 2) {
+      getFavData();
+    }
     emit(AppChangeBottomNavState());
   }
 
@@ -63,6 +75,32 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
+  void userRegister({
+    required String email,
+    required String password,
+    required String name,
+    required String phone,
+  }) {
+    emit(AppRegisterLoadingState());
+    DioHelper.postData(
+      url: register,
+      data: {
+        'email': email,
+        'password': password,
+        'name': name,
+        'phone': phone,
+      },
+    ).then(
+      (value) {
+        registerModel = LoginModel.fromJson(value.data);
+        emit(AppRegisterSuccessState(registerModel: registerModel));
+      },
+    ).catchError((error) {
+      print(error);
+      emit(AppRegisterErrorState(error.toString()));
+    });
+  }
+
   void changePasswordVisibility() {
     isPasswordShown = !isPasswordShown;
     suffix = isPasswordShown == false
@@ -70,6 +108,15 @@ class AppCubit extends Cubit<AppStates> {
         : Icons.visibility_outlined;
 
     emit(AppChangePasswordVisibilityState());
+  }
+
+  void changePasswordVisibility2() {
+    isPasswordShown2 = !isPasswordShown2;
+    suffix2 = isPasswordShown2 == false
+        ? Icons.visibility_off_outlined
+        : Icons.visibility_outlined;
+
+    emit(AppChangePasswordVisibilityState2());
   }
 
   void getHomeData() {
@@ -154,6 +201,37 @@ class AppCubit extends Cubit<AppStates> {
       emit(
         AppGetFavErrorState(onError.toString()),
       );
+    });
+  }
+
+  void getUserData() {
+    emit(AppUserDataLoadingState());
+    DioHelper.getData(
+      url: profile,
+      query: null,
+      token: token,
+    ).then((value) {
+      userModel = LoginModel.fromJson(value.data);
+      emit(AppUserDataSuccessState(userModel));
+    }).catchError((onError) {
+      print(onError);
+      emit(
+        AppUserDataErrorState(onError.toString()),
+      );
+    });
+  }
+
+  SearchModel? searchModel;
+
+  void search(String text) {
+    emit(AppSearchLoadingState());
+    DioHelper.postData(token: token, url: searchc, data: {
+      'text': text,
+    }).then((value) {
+      searchModel = SearchModel.fromJson(json: value.data);
+      emit(AppSearchSuccessState());
+    }).catchError((onError) {
+      emit(AppSearchErrorState(onError));
     });
   }
 }

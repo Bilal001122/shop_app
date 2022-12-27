@@ -11,16 +11,8 @@ class FavoritesModel {
 }
 
 class Data {
-  late final int currentPage;
+  late final int? currentPage;
   late final List<FavoritesData> data = [];
-  late final String firstPageUrl;
-  late final int from;
-  late final int lastPage;
-  late final String lastPageUrl;
-  late final String path;
-  late final int perPage;
-  late final int to;
-  late final int total;
 
   Data.fromJson({required Map<String, dynamic> json}) {
     currentPage = json['current_page'];
@@ -28,14 +20,6 @@ class Data {
       FavoritesData favoritesData = FavoritesData.fromJson(json: element);
       data.add(favoritesData);
     });
-    firstPageUrl = json['first_page_url'];
-    from = json['from'];
-    lastPage = json['last_page'];
-    lastPageUrl = json['last_page_url'];
-    path = json['path'];
-    perPage = json['per_page'];
-    to = json['to'];
-    total = json['total'];
   }
 }
 

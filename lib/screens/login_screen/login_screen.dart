@@ -9,21 +9,24 @@ import 'package:shop_app/shared/components/default_form_field.dart';
 import 'package:shop_app/shared/cubit/cubit.dart';
 import 'package:shop_app/shared/cubit/states.dart';
 
+import '../../shared/constants.dart';
+
 class LoginScreen extends StatelessWidget {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
+  late FocusNode passwordFocusNode;
   @override
   Widget build(BuildContext context) {
+    passwordFocusNode = FocusNode();
     return BlocConsumer<AppCubit, AppStates>(
       listener: (context, state) {
         if (state is AppLoginSuccessState) {
-          if (state.loginModel.status) {
-            print(state.loginModel.message);
-            print(state.loginModel.userData!.token);
+          if (state.loginModel!.status) {
+            print(state.loginModel!.message);
+            print(state.loginModel!.userData!.token);
             Fluttertoast.showToast(
-              msg: state.loginModel.message,
+              msg: state.loginModel!.message!,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.BOTTOM,
               backgroundColor: Colors.green,
@@ -31,8 +34,16 @@ class LoginScreen extends StatelessWidget {
               fontSize: 16,
             );
             CacheHelper.saveData(
-                    key: 'token', value: state.loginModel.userData!.token)
+                    key: 'token', value: state.loginModel!.userData!.token)
                 .then((value) {
+              token = CacheHelper.getData(
+                key: 'token',
+              );
+              AppCubit.get(context).getUserData();
+              AppCubit.get(context).getFavData();
+              AppCubit.get(context).getHomeData();
+              AppCubit.get(context).getCategoriesData();
+
               return Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
@@ -41,9 +52,9 @@ class LoginScreen extends StatelessWidget {
                   (route) => false);
             });
           } else {
-            print(state.loginModel.message);
+            print(state.loginModel!.message);
             Fluttertoast.showToast(
-              msg: state.loginModel.message,
+              msg: state.loginModel!.message!,
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.BOTTOM,
               backgroundColor: Colors.red,
@@ -58,6 +69,7 @@ class LoginScreen extends StatelessWidget {
           appBar: AppBar(),
           body: Center(
             child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Form(
@@ -75,7 +87,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'login now to browse our hot offers ',
+                        'Login now to browse our hot offers ',
                         style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
                             fontSize: 20,
@@ -90,7 +102,9 @@ class LoginScreen extends StatelessWidget {
                       DefaultFormField(
                         controller: emailController,
                         onTap: () {},
-                        onFieldSubmitted: (value) {},
+                        onFieldSubmitted: (value) {
+                          passwordFocusNode.requestFocus();
+                        },
                         isPassword: false,
                         textInputType: TextInputType.emailAddress,
                         prefixIcon: Icons.email_outlined,
@@ -113,6 +127,7 @@ class LoginScreen extends StatelessWidget {
                         height: 15,
                       ),
                       DefaultFormField(
+                        focusNode: passwordFocusNode,
                         controller: passwordController,
                         onTap: () {},
                         onFieldSubmitted: (value) {
@@ -191,6 +206,9 @@ class LoginScreen extends StatelessWidget {
                           ),
                           TextButton(
                             onPressed: () {
+                              token = CacheHelper.getData(
+                                key: 'token',
+                              );
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

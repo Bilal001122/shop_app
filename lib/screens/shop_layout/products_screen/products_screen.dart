@@ -184,7 +184,7 @@ class ProductsScroll extends StatelessWidget {
       crossAxisCount: 2,
       mainAxisSpacing: 1,
       crossAxisSpacing: 10,
-      childAspectRatio: 1 / 1.55,
+      childAspectRatio: 1 / 1.7,
       children: List.generate(
         homeModel.data.products.length,
         (index) {

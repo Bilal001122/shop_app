@@ -16,7 +16,7 @@ class ShopLayout extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             title: Text(
-              'Salla',
+              'Bilal\'s SHOP',
               style: GoogleFonts.poppins(
                 textStyle: const TextStyle(
                   fontSize: 20,
